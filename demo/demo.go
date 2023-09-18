@@ -88,6 +88,7 @@ func QueryBlockByIndex(sdk *fabsdk.FabricSDK, channelName, userName, orgName str
 	return block, nil
 }
 
+// 通过区块hash查询区块
 func QueryBlockByHash(sdk *fabsdk.FabricSDK, channelName, userName, orgName string, hash []byte) (*common.Block, error) {
 	ledgerClient, err := newLedgerClient(sdk, channelName, userName, orgName)
 	if err != nil {
@@ -100,7 +101,8 @@ func QueryBlockByHash(sdk *fabsdk.FabricSDK, channelName, userName, orgName stri
 	return block, nil
 }
 
-func QueryBlockByID(sdk *fabsdk.FabricSDK, channelName, userName, orgName string, txID fab.TransactionID) (*peer.ProcessedTransaction, error) {
+// 通过交易id查询交易
+func QueryTxByID(sdk *fabsdk.FabricSDK, channelName, userName, orgName string, txID fab.TransactionID) (*peer.ProcessedTransaction, error) {
 	ledgerClient, err := newLedgerClient(sdk, channelName, userName, orgName)
 	if err != nil {
 		return nil, errors.WithMessage(err, "failed to create a ledger client:%s")
