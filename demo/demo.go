@@ -11,11 +11,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-// const (
-// 	orgName  = "Org1"
-// 	orgAdmin = "Admin"
-// )
-
+/*
+初始化sdk
+输入：配置文件路径
+输出：sdk对象
+*/
 func NewSDK(configPath string) (*fabsdk.FabricSDK, error) {
 	configProvider := config.FromFile(configPath)
 	sdk, err := fabsdk.New(configProvider)
@@ -25,6 +25,11 @@ func NewSDK(configPath string) (*fabsdk.FabricSDK, error) {
 	return sdk, nil
 }
 
+/*
+初始化资源管理客户端
+输入：fabsdk、用户名、组织名
+输出：资源管理客户端
+*/
 func newResClient(sdk *fabsdk.FabricSDK, userName, orgName string) (*resmgmt.Client, error) {
 	clientProvider := sdk.Context(fabsdk.WithUser(userName), fabsdk.WithOrg(orgName))
 	resMgmtClient, err := resmgmt.New(clientProvider)
@@ -34,6 +39,11 @@ func newResClient(sdk *fabsdk.FabricSDK, userName, orgName string) (*resmgmt.Cli
 	return resMgmtClient, err
 }
 
+/*
+初始化账本客户端
+输入：fabsdk、通道名、用户名、组织名
+输出：资源管理客户端
+*/
 func newLedgerClient(sdk *fabsdk.FabricSDK, channelName, userName, orgName string) (*ledger.Client, error) {
 	channelProvider := sdk.ChannelContext(channelName, fabsdk.WithUser(userName), fabsdk.WithOrg(orgName))
 	ledgerClient, err := ledger.New(channelProvider)
@@ -43,7 +53,11 @@ func newLedgerClient(sdk *fabsdk.FabricSDK, channelName, userName, orgName strin
 	return ledgerClient, nil
 }
 
-// 查询指定peer节点加入了哪些通道
+/*
+查询指定的peer节点加入了哪些通道
+输入：fsbsdk、peer名字、用户名、组织名
+输出：包含所有通道名的字符串切片
+*/
 func QueryChannels(sdk *fabsdk.FabricSDK, peerName, userName, orgName string) ([]string, error) {
 	resMgmtClient, err := newResClient(sdk, userName, orgName)
 	if err != nil {
@@ -63,7 +77,11 @@ func QueryChannels(sdk *fabsdk.FabricSDK, peerName, userName, orgName string) ([
 	return channels, nil
 }
 
-// Query blockchain info, including Height,CurrentBlockHash,PreviousBlockHash
+/*
+查询指定通道的区块链信息，包括高度、当前区块哈希、前一个区块哈希
+输入：fsbsdk、通道名、用户名、组织名
+输出：通道的区块链信息
+*/
 func QueryBlockInfo(sdk *fabsdk.FabricSDK, channelName, userName, orgName string) (*fab.BlockchainInfoResponse, error) {
 	ledgerClient, err := newLedgerClient(sdk, channelName, userName, orgName)
 	if err != nil {
@@ -76,6 +94,11 @@ func QueryBlockInfo(sdk *fabsdk.FabricSDK, channelName, userName, orgName string
 	return bci, nil
 }
 
+/*
+查询指定区块高度的区块信息
+输入：fsbsdk、通道名、用户名、组织名、区块高度
+输出：区块信息
+*/
 func QueryBlockByIndex(sdk *fabsdk.FabricSDK, channelName, userName, orgName string, index uint64) (*common.Block, error) {
 	ledgerClient, err := newLedgerClient(sdk, channelName, userName, orgName)
 	if err != nil {
@@ -88,7 +111,11 @@ func QueryBlockByIndex(sdk *fabsdk.FabricSDK, channelName, userName, orgName str
 	return block, nil
 }
 
-// 通过区块hash查询区块
+/*
+查询指定区块哈希的区块信息
+输入：fsbsdk、通道名、用户名、组织名、区块哈希
+输出：区块信息
+*/
 func QueryBlockByHash(sdk *fabsdk.FabricSDK, channelName, userName, orgName string, hash []byte) (*common.Block, error) {
 	ledgerClient, err := newLedgerClient(sdk, channelName, userName, orgName)
 	if err != nil {
@@ -101,7 +128,11 @@ func QueryBlockByHash(sdk *fabsdk.FabricSDK, channelName, userName, orgName stri
 	return block, nil
 }
 
-// 通过交易id查询交易
+/*
+查询指定交易id的交易信息
+输入：fsbsdk、通道名、用户名、组织名、交易id
+输出：交易信息
+*/
 func QueryTxByID(sdk *fabsdk.FabricSDK, channelName, userName, orgName string, txID fab.TransactionID) (*peer.ProcessedTransaction, error) {
 	ledgerClient, err := newLedgerClient(sdk, channelName, userName, orgName)
 	if err != nil {
